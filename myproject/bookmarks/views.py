@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from bookmarks.models import Bookmark, Tag
 from bookmarks.forms import BookmarkForm
+from django.http import HttpResponse
 import urllib
  
 def index(request):
@@ -16,16 +17,27 @@ def index(request):
     				tag, created = Tag.objects.get_or_create(slug=tag_slug)
     				tag.save()
     				tag.bookmarks.add(new_bookmark)
-
+    		if request.is_ajax():
+    			return render(request, 'bookmark.html', {'bookmark': new_bookmark})
     		return redirect(index)
-    bookmarks = Bookmark.objects.all().order_by('-timestamp')[:10]
-    current_user = request.user
-    form = BookmarkForm(initial={'author':current_user})
-    context = {
-        'bookmarks': bookmarks,
-        'form': form,
-    }
-    return render(request, 'index.html', context)
+    	else:
+    		response = 'Errors: '
+    		for key in form.errors.keys():
+    			value = form.errors[key]
+    			errors = ''
+    			for error in value:
+    				errors = errors + error + ' '
+    			response = response + ' ' + key + ': ' + errors
+    		return HttpResponse('<li class="error">' + response + '</li>')
+    else:
+    	bookmarks = Bookmark.objects.all().order_by('-timestamp')[:10]
+    	current_user = request.user
+    	form = BookmarkForm(initial={'author':current_user})
+    	context = {
+    		'bookmarks': bookmarks,
+    		'form': form,
+    	}
+    	return render(request, 'index.html', context)
 
 
 def tag(request, tag_name):
