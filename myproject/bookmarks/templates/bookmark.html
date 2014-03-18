@@ -8,4 +8,9 @@
 	            {% endfor %}
 	        {% endif %}
 	</div>
+	{% if user.is_authenticated %}
+	<div class="actions"><form method="POST" action="{% url 'bookmarks.views.delete' bookmark.id %}">
+		{% csrf_token %}
+		<input type="submit" value="Delete">
+	</form> | <a href="{% url 'bookmarks.views.edit' bookmark.id %}">Edit</a></div>{% endif %}
 </li>

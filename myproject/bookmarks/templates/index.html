@@ -12,7 +12,7 @@
  
 {% block bookmark_widget %}
     {% if user %}
-    <div id="new-bookmark-widget">
+    <div id="new-bookmark-widget" action="{% url 'bookmarks.views.index' %}">
         <form method="post">
         {% csrf_token %}
         <h3>Bookmark</h3>

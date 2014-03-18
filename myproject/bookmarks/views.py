@@ -48,3 +48,16 @@ def tag(request, tag_name):
         'bookmarks': bookmarks,
     }
     return render(request, 'tag.html', context)
+
+def delete(request, bookmark_id):
+	if request.method == "POST":
+		b = get_object_or_404(Bookmark, pk=int(bookmark_id))
+		b.delete()
+	return redirect(index)
+
+def edit(request, bookmark_id):
+	b = get_object_or_404(Bookmark, pk=int(bookmark_id))
+	context = {
+		'form': BookmarkForm(instance=b),
+	}
+	return render(request, 'edit.html', context)
